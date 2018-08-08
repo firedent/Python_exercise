@@ -79,18 +79,29 @@ for i in prime_factors():
         break
     pf.append(i)
 
-dic_of_fraction = dict()
-for i in L:
-    for j in L:
-        a, b = i, j
-        g = gcd(a, b)
-        a, b = int(a / g), int(b / g)
-        if a == b:
-            dic_of_fraction[(a, b)] = 1
-            continue
-        if a > b:
-            a, b = b, a
-        dic_of_fraction[(a, b)] = a / b
+
+def get_dic_of_fraction(L):
+    dic_of_fraction = dict()
+    for i in L:
+        for j in L:
+            a, b = i, j
+            if a > b:
+                a, b = b, a
+            # more time
+            # if (a, b) not in dic_of_gcd:
+            #     g = dic_of_gcd[(a, b)] = gcd(a, b)
+            # else:
+            #     g = dic_of_gcd[(a, b)]
+            g = gcd(a, b)
+            a, b = int(a / g), int(b / g)
+            if a == b:
+                dic_of_fraction[(a, b)] = 1
+                continue
+
+            dic_of_fraction[(a, b)] = a / b
+    return dic_of_fraction
+dic_of_fraction = get_dic_of_fraction(L)
+
 
 list_of_fraction = []
 for x in dic_of_fraction.items():
@@ -103,13 +114,11 @@ list_of_fraction_sorted = sorted(list_of_fraction, key=sort_fraction)
 
 size_of_simplest_fraction = list_of_fraction_sorted[0][2]
 size_of_most_complex_fraction = list_of_fraction_sorted[-1][2]
-
 for i in list_of_fraction_sorted:
     if i[2] == size_of_simplest_fraction:
         simplest_fractions.append(i[0])
     else:
         break
-
 for i in reversed(list_of_fraction_sorted):
     if i[2] == size_of_most_complex_fraction:
         most_complex_fractions.append(i[0])
@@ -117,20 +126,18 @@ for i in reversed(list_of_fraction_sorted):
         break
 
 set_of_denominators = set()
+dic_of_multiplicity_of_PF = dict()
 for i in most_complex_fractions:
     set_of_denominators.add(i[1])
 
 list_of_NB_of_PF_denominators = []
 for i in list(resolve(set_of_denominators)):
-    list_of_NB_of_PF_denominators.append(count_prime_factors(i))
-
-dic_of_multiplicity_of_PF = dict()
-for i in list_of_NB_of_PF_denominators:
-    for j in i.items():
+    for j in count_prime_factors(i).items():
         pf = j[0]
         multi = j[1]
         if multi > dic_of_multiplicity_of_PF.get(pf, 0):
             dic_of_multiplicity_of_PF[pf] = multi
+
 
 dic_of_multiplicity_of_PF_sorted = sorted(dic_of_multiplicity_of_PF.items(), key=lambda x: x[1], reverse=True)
 
