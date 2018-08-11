@@ -8,7 +8,7 @@ import time
 
 try:
     # arg_for_seed, length, max_value = input('Enter three strictly positive integers: ').split()
-    arg_for_seed, length, max_value = 1, 2000, 20000
+    arg_for_seed, length, max_value = 1, 100, 10000
 except ValueError:
     print('Incorrect input, giving up.')
     sys.exit()
@@ -52,7 +52,7 @@ def prime_factors():
 def prime_number_up_to(n):
     l = [True] * (n+1)
     pf = []
-    for i in range(2,round(sqrt(n))+1):
+    for i in range(2, round(sqrt(n))+1):
         if l[i]:
             for j in range(i*i, n+1, i):
                 l[j] = False
@@ -60,6 +60,21 @@ def prime_number_up_to(n):
         if l[i]:
             pf.append(i)
     return pf
+
+
+def ob_prime_number_up_to(n):
+    index = (n-1)//2
+    l = [True] * (index + 1)
+    pf = [2]
+    for i in range(1, (round(sqrt(n))+1)//2):
+        if l[i]:
+            for j in range(2*i*(i+1), index+1, 2*i+1):
+                l[j] = False
+    for i in range(1, index+1):
+        if l[i]:
+            pf.append(2*i+1)
+    return pf
+
 
 def resolve(ll):
     L_L = []
@@ -73,6 +88,7 @@ def resolve(ll):
                 break
         if len(L) != 0:
             L_L.append(L)
+    print(L_L)
     return L_L
 
 
@@ -83,12 +99,12 @@ def count_prime_factors(l):
     return d
 
 
-pf = []
+# pf = []
 # for i in prime_factors():
 #     if i > max_value:
 #         break
 #     pf.append(i)
-pf = prime_number_up_to(max_value)
+pf = ob_prime_number_up_to(max_value)
 
 # def get_dic_of_fraction(L):
 #     dic_of_fraction = dict()
