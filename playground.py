@@ -1,36 +1,12 @@
-# coding=utf-8
-def prime_factors():
-    i = 2
-    while (1):
-        j = 2
-        while (j < i):
-            if (i % j == 0):
-                break
-            j = j + 1
-        if (j == i):
-            yield i
-        i += 1
+import fractions
+L=[1,2,2,3,5,9,8,6,]
+L1=sorted(L)#排序
+L2=list(set(L1))#去重
+L3=[]
+print(L2)
+for i in range(1,len(L2)):
+    for n in range(0,i+1):
+       L3=fractions.Fraction(L2[i-n],L2[i])
 
 
-def resolve(ll):
-    L_L = []
-    for a in ll:
-        L = []
-        for su in prime_factors():
-            a, b = divmod(a, su)
-            while (b == 0):
-                L.append(su)
-                a, b = divmod(a, su)
-                if (a == 1):
-                    break
-
-        if len(L) != 0:
-            L_L.append(L)
-    return L_L
-
-
-l = []
-for i in prime_factors():
-    if i > 10000:
-        break
-    l.append(i)
+print(L3)

@@ -7,7 +7,8 @@ from math import gcd
 import time
 
 try:
-    arg_for_seed, length, max_value = input('Enter three strictly positive integers: ').split()
+    # arg_for_seed, length, max_value = input('Enter three strictly positive integers: ').split()
+    arg_for_seed, length, max_value = 1, 2000, 20000
 except ValueError:
     print('Incorrect input, giving up.')
     sys.exit()
@@ -35,6 +36,8 @@ largest_prime_factors = []
 
 # REPLACE THIS COMMENT WITH YOUR CODE
 
+L_ss = list(set(L))
+L_ss.sort()
 start = time.time()
 def prime_factors():
     i = 2
@@ -64,15 +67,12 @@ def resolve(ll):
     return L_L
 
 
-def sort_fraction(x):
-    return x[2], x[1]
-
-
 def count_prime_factors(l):
     d = dict()
     for i in l:
         d[i] = d.get(i, 0) + 1
     return d
+
 
 for i in prime_factors():
     if i > max_value:
@@ -80,38 +80,45 @@ for i in prime_factors():
     pf.append(i)
 
 
+# def get_dic_of_fraction(L):
+#     dic_of_fraction = dict()
+#     for i in L:
+#         for j in L:
+#             a, b = i, j
+#             if a > b:
+#                 a, b = b, a
+#             g = gcd(a, b)
+#             a, b = int(a / g), int(b / g)
+#             if a == b:
+#                 dic_of_fraction[(a, b)] = 1
+#                 continue
+#
+#             dic_of_fraction[(a, b)] = a / b
+#     return dic_of_fraction
+# dic_of_fraction = get_dic_of_fraction(L)
+
 def get_dic_of_fraction(L):
     dic_of_fraction = dict()
+    head = 0
     for i in L:
-        for j in L:
-            a, b = i, j
-            if a > b:
-                a, b = b, a
-            # more time
-            # if (a, b) not in dic_of_gcd:
-            #     g = dic_of_gcd[(a, b)] = gcd(a, b)
-            # else:
-            #     g = dic_of_gcd[(a, b)]
-            g = gcd(a, b)
-            a, b = int(a / g), int(b / g)
-            if a == b:
-                dic_of_fraction[(a, b)] = 1
+        for j in L[head:]:
+            if i == j:
+                dic_of_fraction[(1, 1)] = 1
                 continue
-
-            dic_of_fraction[(a, b)] = a / b
+            g = gcd(i, j)
+            dic_of_fraction[(int(i / g), int(j / g))] = i / j
+        head += 1
     return dic_of_fraction
-dic_of_fraction = get_dic_of_fraction(L)
+dic_of_fraction = get_dic_of_fraction(L_ss)
 
 
 list_of_fraction = []
 for x in dic_of_fraction.items():
-    size = 0
-    for i in x[0]:
-        size += len(str(i))
+    s = str(x[0][0])+str(x[0][1])
+    size = len(s)
     list_of_fraction.append((x[0], x[1], size))
 
-list_of_fraction_sorted = sorted(list_of_fraction, key=sort_fraction)
-
+list_of_fraction_sorted = sorted(list_of_fraction, key=lambda a: (a[2], a[1]))
 size_of_simplest_fraction = list_of_fraction_sorted[0][2]
 size_of_most_complex_fraction = list_of_fraction_sorted[-1][2]
 for i in list_of_fraction_sorted:
@@ -131,7 +138,7 @@ for i in most_complex_fractions:
     set_of_denominators.add(i[1])
 
 list_of_NB_of_PF_denominators = []
-for i in list(resolve(set_of_denominators)):
+for i in resolve(set_of_denominators):
     for j in count_prime_factors(i).items():
         pf = j[0]
         multi = j[1]
