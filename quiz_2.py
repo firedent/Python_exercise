@@ -3,7 +3,7 @@
 
 import sys
 from random import seed, randint
-from math import gcd
+from math import gcd, sqrt
 import time
 
 try:
@@ -32,13 +32,10 @@ size_of_most_complex_fraction = None
 most_complex_fractions = []
 multiplicity_of_largest_prime_factor = 0
 largest_prime_factors = []
-
+start = time.time()
 
 # REPLACE THIS COMMENT WITH YOUR CODE
 
-L_ss = list(set(L))
-L_ss.sort()
-start = time.time()
 def prime_factors():
     i = 2
     while (1):
@@ -51,7 +48,19 @@ def prime_factors():
             yield i
         i += 1
 
-pf = []
+
+def prime_number_up_to(n):
+    l = [True] * (n+1)
+    pf = []
+    for i in range(2,round(sqrt(n))+1):
+        if l[i]:
+            for j in range(i*i, n+1, i):
+                l[j] = False
+    for i in range(2, n+1):
+        if l[i]:
+            pf.append(i)
+    return pf
+
 def resolve(ll):
     L_L = []
     for a in ll:
@@ -74,28 +83,29 @@ def count_prime_factors(l):
     return d
 
 
-for i in prime_factors():
-    if i > max_value:
-        break
-    pf.append(i)
-
+pf = []
+# for i in prime_factors():
+#     if i > max_value:
+#         break
+#     pf.append(i)
+pf = prime_number_up_to(max_value)
 
 # def get_dic_of_fraction(L):
 #     dic_of_fraction = dict()
 #     for i in L:
 #         for j in L:
 #             a, b = i, j
+#             if a == b:
+#                 dic_of_fraction[(1, 1)] = 1
+#                 continue
 #             if a > b:
 #                 a, b = b, a
 #             g = gcd(a, b)
 #             a, b = int(a / g), int(b / g)
-#             if a == b:
-#                 dic_of_fraction[(a, b)] = 1
-#                 continue
-#
 #             dic_of_fraction[(a, b)] = a / b
 #     return dic_of_fraction
 # dic_of_fraction = get_dic_of_fraction(L)
+
 
 def get_dic_of_fraction(L):
     dic_of_fraction = dict()
@@ -109,6 +119,10 @@ def get_dic_of_fraction(L):
             dic_of_fraction[(int(i / g), int(j / g))] = i / j
         head += 1
     return dic_of_fraction
+
+
+L_ss = list(set(L))
+L_ss.sort()
 dic_of_fraction = get_dic_of_fraction(L_ss)
 
 
