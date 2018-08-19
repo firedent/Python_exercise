@@ -36,17 +36,17 @@ start = time.time()
 
 # REPLACE THIS COMMENT WITH YOUR CODE
 
-# def prime_factors():
-#     i = 2
-#     while (1):
-#         j = 2
-#         while (j < i):
-#             if (i % j == 0):
-#                 break
-#             j = j + 1
-#         if (j == i):
-#             yield i
-#         i += 1
+def prime_factors():
+    i = 2
+    while (1):
+        j = 2
+        while (j < i):
+            if (i % j == 0):
+                break
+            j = j + 1
+        if (j == i):
+            yield i
+        i += 1
 
 
 def prime_number_up_to(n):
@@ -81,27 +81,15 @@ def resolve(ll):
     for a in ll:
         L = []
         for su in pf:
-            while a % su == 0:
+            while (a % su == 0):
                 a = a / su
                 L.append(su)
             if a == 1:
                 break
         if len(L) != 0:
             L_L.append(L)
+    print(L_L)
     return L_L
-
-
-def resolve_simple(n):
-    l = []
-    if n == 1:
-        return []
-    for i in pf:
-        if n == 1:
-            break
-        while n%i == 0:
-            l.append(i)
-            n = n/i
-    return l
 
 
 def count_prime_factors(l):
@@ -141,11 +129,10 @@ def get_dic_of_fraction(L):
     for i in L:
         for j in L[head:]:
             if i == j:
-                dic_of_fraction[(1, 1)] = (2, 1)
+                dic_of_fraction[(1, 1)] = 1
                 continue
             g = gcd(i, j)
-            a, b = int(i / g), int(j / g)
-            dic_of_fraction[(a, b)] = (len(str(a)+str(b)), i / j)
+            dic_of_fraction[(int(i / g), int(j / g))] = i / j
         head += 1
     return dic_of_fraction
 
@@ -154,43 +141,52 @@ L_ss = list(set(L))
 L_ss.sort()
 dic_of_fraction = get_dic_of_fraction(L_ss)
 
-list_of_fraction_sorted = sorted(dic_of_fraction.items(), key=lambda a: (a[1][0], a[1][1]), reverse=False)
 
-size_of_simplest_fraction = list_of_fraction_sorted[0][1][0]
-size_of_most_complex_fraction = list_of_fraction_sorted[-1][1][0]
+list_of_fraction = []
+for x in dic_of_fraction.items():
+    s = str(x[0][0])+str(x[0][1])
+    size = len(s)
+    list_of_fraction.append((x[0], x[1], size))
 
+list_of_fraction_sorted = sorted(list_of_fraction, key=lambda a: (a[2], a[1]))
+size_of_simplest_fraction = list_of_fraction_sorted[0][2]
+size_of_most_complex_fraction = list_of_fraction_sorted[-1][2]
 for i in list_of_fraction_sorted:
-    if i[1][0] == size_of_simplest_fraction:
+    if i[2] == size_of_simplest_fraction:
         simplest_fractions.append(i[0])
     else:
         break
-
-set_of_denom = set()
-dict_of_pf = dict()
-for i in list_of_fraction_sorted[::-1]:
-    if i[1][0] == size_of_most_complex_fraction:
-        most_complex_fractions.append((i[0][0], i[0][1]))
-        if i[0][1] not in set_of_denom:
-            set_of_denom.add(i[0][1])
-            dict_of_pf_denom = dict()
-            for i in resolve_simple(i[0][1]):
-                dict_of_pf_denom[i] = dict_of_pf_denom.setdefault(i, 0) + 1
-            for i in dict_of_pf_denom.items():
-                if i[1] > dict_of_pf.setdefault(i[0],0):
-                    dict_of_pf[i[0]] = i[1]
+for i in reversed(list_of_fraction_sorted):
+    if i[2] == size_of_most_complex_fraction:
+        most_complex_fractions.append(i[0])
     else:
         break
 
-dict_of_pf_sorted = sorted(dict_of_pf.items(),key=lambda i: i[1])
+set_of_denominators = set()
+dic_of_multiplicity_of_PF = dict()
+for i in most_complex_fractions:
+    set_of_denominators.add(i[1])
 
-if len(dict_of_pf_sorted) != 0:
-    multiplicity_of_largest_prime_factor = dict_of_pf_sorted[-1][1]
-    for i in dict_of_pf_sorted[::-1]:
+list_of_NB_of_PF_denominators = []
+for i in resolve(set_of_denominators):
+    for j in count_prime_factors(i).items():
+        pf = j[0]
+        multi = j[1]
+        if multi > dic_of_multiplicity_of_PF.get(pf, 0):
+            dic_of_multiplicity_of_PF[pf] = multi
+
+
+dic_of_multiplicity_of_PF_sorted = sorted(dic_of_multiplicity_of_PF.items(), key=lambda x: x[1], reverse=True)
+
+if len(dic_of_multiplicity_of_PF_sorted) != 0:
+    multiplicity_of_largest_prime_factor = dic_of_multiplicity_of_PF_sorted[0][1]
+    for i in dic_of_multiplicity_of_PF_sorted:
         if i[1] == multiplicity_of_largest_prime_factor:
             largest_prime_factors.append(i[0])
         else:
             break
-    largest_prime_factors.reverse()
+
+largest_prime_factors.sort()
 
 print('The size of the simplest fraction <= 1 built from members of L is:',
       size_of_simplest_fraction
