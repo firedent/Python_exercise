@@ -6,6 +6,7 @@
 
 
 from random import seed, randrange
+from collections import defaultdict
 import sys
 
 
@@ -20,20 +21,44 @@ def display_grid():
 
 
 def size_of_largest_construction():
-    pass
+    biggest = 0
+    for i in range(dim):
+        j1 = 0
+        while j1 < dim:
+            if not grid[i][j1]:
+                j1 += 1
+                continue
+            for j2 in range(j1, dim):
+                if not grid[i][j2]:
+                    break
+                con = construction_size(i, j1, j2)
+                if con > biggest:
+                    biggest = con
+            j1 = j2
+            j1 += 1
+    return biggest
     # Replace pass above with your code
 
 
 # If j1 <= j2 and the grid has a 1 at the intersection of row i and column j
 # for all j in {j1, ..., j2}, then returns the number of blocks in the construction
 # built over this line of blocks.
-def construction_size(i, j1, j2):
-    pass
-    # Replace pass above with your code
 
-            
+dict_size = defaultdict(lambda: 0)
+
+
+def construction_size(i, j1, j2):
+    size_construction = 0
+    for j in range(j1, j2+1):
+        if not grid[i][j]:
+            break
+        dict_size[(i, j)] = dict_size[(i-1, j)] + 1
+        size_construction = size_construction + dict_size[(i, j)]
+    return size_construction
+
 try:
-    for_seed, n = input('Enter two integers, the second one being strictly positive: ').split()
+    # for_seed, n = input('Enter two integers, the second one being strictly positive: ').split()
+    for_seed, n = 0, 5
     for_seed = int(for_seed)
     n = int(n)
     if n <= 0:
