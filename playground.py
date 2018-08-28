@@ -1,44 +1,73 @@
+# coding=utf-8
+# Randomly fills a grid of size 10 x 10 with 0s and 1s,
+# in an estimated proportion of 1/2 for each,
+# and computes the longest leftmost path that starts
+# from the top left corner -- a path consisting of
+# horizontally or vertically adjacent 1s --,
+# visiting every point on the path once only.
+#
+# Written by *** and Eric Martin for COMP9021
+
+
 import sys
-import os
-import csv
-from collections import defaultdict
+from random import seed, randrange
 
-filename = 'monthly_csv.csv'
-if not os.path.exists(filename):
-    print(f'There is no file named {filename} in the working directory, giving up...')
+from queue_adt import *
+
+
+def display_grid():
+    for i in range(len(grid)):
+        print('   ', ' '.join(str(grid[i][j]) for j in range(len(grid[0]))))
+
+
+def leftmost_longest_path_from_top_left_corner():
+    path = []
+    new_directions = {'': ['s', 'e'], 'n': ['e', 'n', 'w'], 'e': ['s', 'e', 'n'], 's': ['w', 's', 'e'],
+                      'w': ['n', 'w', 's']}
+    distance_dirt = {'n': (0, -1), 'e': (1, 0), 's': (0, 1), 'w': (-1, 0)}
+    if grid[0][0] != 0:
+        paths_quene = Queue()
+        paths_quene.enqueue(([(0, 0)], ['s', 'e']))
+        while not paths_quene.is_empty():
+            node = paths_quene.dequeue()
+            path = node[0]
+            destinaton = path[-1]
+            for direction in node[1]:
+                distance = distance_dirt.get(direction)
+
+                new_destinaton = (destinaton[0] + distance[1], destinaton[1] + distance[0])
+
+                directions = new_directions.get(direction)
+
+                if (new_destinaton[0] not in range(10)) | (new_destinaton[1] not in range(10)):
+                    continue
+                print(new_destinaton[0], new_destinaton[1])
+                if grid[new_destinaton[0]][new_destinaton[1]] == 0:
+                    continue
+                if new_destinaton in path:
+                    continue
+
+                new_path = path.copy()
+                new_path.append(new_destinaton)
+                new_node = (new_path, directions)
+                paths_quene.enqueue(new_node)
+
+    return path
+
+
+provided_input = input('Enter one integer: ')
+try:
+    for_seed = int(provided_input)
+except ValueError:
+    print('Incorrect input, giving up.')
     sys.exit()
+seed(for_seed)
+grid = [[randrange(2) for _ in range(10)] for _ in range(10)]
+print('Here is the grid that has been generated:')
+display_grid()
+path = leftmost_longest_path_from_top_left_corner()
+if not path:
+    print('There is no path from the top left corner.')
+else:
+    print(f'The leftmost longest path from the top left corner is: {path}')
 
-source = input('Enter the source (GCAG or GISTEMP): ')
-year_or_range_of_years = input('Enter a year or a range of years in the form XXXX -- XXXX: ')
-month = input('Enter a month: ')
-average = 0
-years_above_average = []
-
-## REPLACE THIS COMMENT WITH YOUR CODE
-
-
-range_years = year_or_range_of_years.split(' -- ')
-range_years = []
-for y in rangeyears:
-    range_years.append(int(y))
-range_years.sort()
-print(range_years)
-monthdict = {'January': '1', 'February': '2', 'March': '3', 'April': '4', 'May': '5', 'June': '6', 'July': '7',
-             'August': '8', 'September': '9', 'October': '10', 'November': '11', 'December': '12'}
-print(monthdict[month])
-
-needlist = defaultdict(list)
-with open(filename) as file:
-    csv_file = csv.reader(file)
-    for Source, Date, Mean in csv_file:
-        Datenew = Date.split('-')
-        if Source == source and int(Datenew[1]) == int(monthdict[month]) and range_years[0] <= int(Datenew[0]) <= \
-                range_years[1]:
-
-            needlist[Datenew[0]].append(Mean)
-        else:
-            continue
-
-print(f'The average anomaly for {month} in this range of years is: {average:.2f}.')
-print('The list of years when the temperature anomaly was above average is:')
-print(years_above_average)
