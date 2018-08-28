@@ -18,31 +18,54 @@
 import sys
 
 try:
+    # encoded_set = 12341432543254323435
     encoded_set = int(input('Input a nonnegative integer: '))
     if encoded_set < 0:
         raise ValueError
 except ValueError:
     print('Incorrect input, giving up.')
     sys.exit()
-        
+
+
 def display(L):
-    print('{', end = '')
-    print(', '.join(str(e) for e in L), end = '')
+    print('{', end='')
+    print(', '.join(str(e) for e in L), end='')
     print('}')
 
+
 def decode(encoded_set):
-    return []
-    # REPLACE RETURN [] ABOVE WITH YOUR CODE 
-    
+    list_encode_set = []
+    str_bin = str(bin(encoded_set))[2:][::-1]
+    for i in range(len(str_bin)):
+        if int(str_bin[i]):
+            d, m = divmod(i, 2)
+            if m == 0:
+                list_encode_set.append(d)
+            else:
+                list_encode_set.append((d + m) * -1)
+    return sorted(list_encode_set)
+
+
 def code_derived_set(encoded_set):
-    return 0
-    # REPLACE RETURN 0 ABOVE WITH YOUR CODE 
+    result = 0
+    for n in encoded_set:
+        if n < 0:
+            result = pow(2, abs(n) * 2 - 1) + result
+        else:
+            result = pow(2, n * 2) + result
+    return result
 
-print('The encoded set is: ', end = '')
-display(decode(encoded_set))
-code_of_derived_set = code_derived_set(encoded_set)
-print('The derived set is encoded as:', code_of_derived_set)
-print('It is: ', end = '')
-display(decode(code_of_derived_set))
 
-    
+encoded_set = decode(encoded_set)
+n = 0
+set_derived = set()
+for i in encoded_set:
+    n = n + i
+    set_derived.add(n)
+
+set_derived_listed = sorted(list(set_derived))
+print('The encoded set is: ', end='')
+display(encoded_set)
+print('The derived set is encoded as:', code_derived_set(set_derived_listed))
+print('It is: ', end='')
+display(set_derived_listed)
