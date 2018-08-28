@@ -7,6 +7,7 @@
 
 from random import seed, randrange
 from collections import defaultdict
+import time
 import sys
 
 
@@ -48,17 +49,16 @@ dict_size = defaultdict(lambda: 0)
 
 
 def construction_size(i, j1, j2):
-    size_construction = 0
-    for j in range(j1, j2+1):
-        if not grid[i][j]:
-            break
-        dict_size[(i, j)] = dict_size[(i-1, j)] + 1
-        size_construction = size_construction + dict_size[(i, j)]
+    local = dict_size[(i, j2, j2)] = dict_size[(i - 1, j2, j2)] + 1
+    if j1 == j2:
+        size_construction = local
+    else:
+        size_construction = dict_size[(i, j1, j2)] = dict_size[(i, j1, j2-1)] + local
     return size_construction
 
 try:
     # for_seed, n = input('Enter two integers, the second one being strictly positive: ').split()
-    for_seed, n = 0, 5
+    for_seed, n = 0, 4
     for_seed = int(for_seed)
     n = int(n)
     if n <= 0:
@@ -71,10 +71,13 @@ seed(for_seed)
 grid = [[bool(randrange(n)) for _ in range(dim)] for _ in range(dim)]
 print('Here is the grid that has been generated:')
 display_grid()
+time1 = time.time()
 size = size_of_largest_construction()
+time2 = time.time()
 if not size:
     print(f'The largest block construction has no block.')  
 elif size == 1:
     print(f'The largest block construction has 1 block.')  
 else:
     print(f'The largest block construction has {size_of_largest_construction()} blocks.')  
+print(time2 - time1)
