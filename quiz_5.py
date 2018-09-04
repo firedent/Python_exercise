@@ -18,7 +18,7 @@
 import sys
 
 try:
-    # encoded_set = 12341432543254323435
+    # encoded_set = 9999999999999999999999
     encoded_set = int(input('Input a nonnegative integer: '))
     if encoded_set < 0:
         raise ValueError
