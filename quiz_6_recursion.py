@@ -9,7 +9,7 @@ from random import seed, randrange
 import sys
 
 
-dim = 45
+dim = 10
 
 
 def display_grid():
@@ -19,10 +19,16 @@ def display_grid():
     print()
 
 
-def visit_point(start_point, chess_set):
+def visit_point(start_point):
     i, j = start_point[0], start_point[1]
-    a, b = 1, 2
     visited = []
+    if not 0<= i<len(grid) or not 0<=j<len(grid):
+        return visited
+    if grid[i][j] == 0:
+        return visited
+    grid[i][j] = 0
+    visited = [(i, j)]
+    a, b = 1, 2
     for _ in range(2):
         a, b = b, a
         for _ in range(2):
@@ -30,38 +36,22 @@ def visit_point(start_point, chess_set):
             for _ in range(2):
                 b = b*-1
                 v_i, v_j = i+a, j+b
-                if (v_i, v_j) in chess_set:
-                    if grid[v_i][v_j] == 1:
-                        visited.append((v_i, v_j))
+                for v in visit_point((v_i, v_j)):
+                    visited.append(v)
     return visited
 
 
 def explore_board():
-    chess = 0
-    chess_set = set()
+    num = 0
     for i in range(len(grid)):
         for j in range(len(grid)):
-            if grid[i][j] == 1:
-                chess += 1
-                chess_set.add((i, j))
-
-    # print(f'chess:{chess}')
-    num = 0
-    while len(chess_set) != 0:
-        q = set()
-        q.add(chess_set.pop())
-        while len(q) != 0:
-            going_visit = q.pop()
-            visited = visit_point(going_visit, chess_set)
-            for i in visited:
-                chess_set.remove(i)
-                q.add(i)
-        num += 1
+            if len(visit_point((i, j))) != 0:
+                num += 1
     return num
 
 
 try:
-    # for_seed, n = (int(i) for i in input('Enter two integers: ').split())
+#    for_seed, n = (int(i) for i in input('Enter two integers: ').split())
     for_seed, n = 0, 3
     if not n:
         raise ValueError
