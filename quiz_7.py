@@ -75,6 +75,12 @@ class Disk:
     >>> disk_8.change_radius(7)
     >>> disk_8.absorb(disk_7)
     Disk(Point(-0.05, 0.79), 7.79)
+    >>> disk_9 = Disk(centre = Point(3, 4), radius = 4)
+    >>> disk_10 = Disk(centre = Point(1.2, 1.6), radius = 2)
+    >>> disk_9.absorb(disk_10)
+    Disk(Point(2.70, 3.60), 4.50)
+    >>> disk_10.absorb(disk_9)
+    Disk(Point(2.70, 3.60), 4.50)
     """
 
     def __init__(self, *, centre=Point(0, 0), radius=0):
@@ -127,5 +133,4 @@ class Disk:
 
 if __name__ == '__main__':
     import doctest
-
     doctest.testmod()
