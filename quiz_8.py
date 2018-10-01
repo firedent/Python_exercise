@@ -9,7 +9,6 @@ import sys
 from math import gcd
 from random import seed, randrange
 from extended_linked_list import ExtendedLinkedList
-
 def collect_nodes(L, length):
     node = L.head
     nodes = {}
@@ -29,7 +28,6 @@ except ValueError:
     sys.exit()
 seed(arg_for_seed)
 L = [randrange(100) for _ in range(length)]
-
 LL = ExtendedLinkedList(L)
 LL.print()
 nodes = collect_nodes(LL, length)
