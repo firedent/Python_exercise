@@ -12,3 +12,5 @@ This repo contains the solutions for 10 COM9021 exercises, each of them is worth
 8. Linked list
 9. Queue & Dictionary
 10. Binary tree
+
+For the details, please see the attached pdf file. 
